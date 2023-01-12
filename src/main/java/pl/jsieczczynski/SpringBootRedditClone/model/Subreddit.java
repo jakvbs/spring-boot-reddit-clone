@@ -56,6 +56,10 @@ public class Subreddit {
     private List<User> users;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "author_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_subreddit_author_id")
+    )
     private User author;
 }

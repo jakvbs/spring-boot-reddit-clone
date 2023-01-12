@@ -33,11 +33,19 @@ public class Comment {
     private Instant createdDate;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "author_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_comment_author_id")
+    )
     private User author;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "parent_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "parent_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_comment_parent_id")
+    )
     private Comment parent;
 
     @OneToMany(mappedBy = "parent", orphanRemoval = true)

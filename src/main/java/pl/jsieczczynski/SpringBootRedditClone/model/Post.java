@@ -33,13 +33,22 @@ public class Post {
     private Integer voteCount = 0;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "author_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_post_author_id")
+    )
     private User author;
 
     Instant createdDate;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "subreddit_id")
+    @JoinColumn(
+            name = "subreddit_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_post_subreddit_id")
+
+    )
     private Subreddit subreddit;
 
     @PrePersist

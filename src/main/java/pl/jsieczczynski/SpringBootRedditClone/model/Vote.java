@@ -21,14 +21,25 @@ public class Vote {
     private VoteType voteType;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "post_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_vote_post_id")
+    )
     private Post post;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "comment_id", referencedColumnName = "id")
+    @JoinColumn(
+            name = "comment_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_vote_comment_id")
+    )
     private Comment comment;
 
     @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_vote_user_id")
+    )
     private User user;
 }
