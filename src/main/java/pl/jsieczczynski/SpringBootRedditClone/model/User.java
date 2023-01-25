@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-
 import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
@@ -52,6 +51,8 @@ public class User implements UserDetails {
 
     private boolean enabled;
 
+    private boolean blocked;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -77,7 +78,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !blocked;
     }
 
     @Override

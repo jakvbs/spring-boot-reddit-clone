@@ -30,7 +30,7 @@ public class Comment {
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
-    private Instant createdDate;
+    private Instant createdAt;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(

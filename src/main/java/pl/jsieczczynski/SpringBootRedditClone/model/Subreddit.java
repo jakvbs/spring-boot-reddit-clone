@@ -30,7 +30,7 @@ public class Subreddit {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    private Instant createdDate;
+    private Instant createdAt;
 
     @NotBlank(message = "Community name is required")
     private String name;

@@ -40,7 +40,7 @@ public class Post {
     )
     private User author;
 
-    Instant createdDate;
+    Instant createdAt;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(
