@@ -8,13 +8,10 @@
 </head>
 <body>
 <div th:fragment="footer">
-
-    <!--    <div class="container">-->
-
     <footer class="fixed-bottom">
         <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
             <div sec:authorize="isAuthenticated()">
-                | Logged user: <span sec:authentication="name"></span> |
+                Logged user: <span sec:authentication="name"></span> |
                 Roles: <span sec:authentication="principal.authorities"></span> |
                 <a href="/logout">Sign Out</a>
             </div>

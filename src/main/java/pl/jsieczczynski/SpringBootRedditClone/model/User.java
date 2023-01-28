@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,10 +17,13 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static javax.persistence.GenerationType.IDENTITY;
+
 
 @Data
 @Entity
@@ -26,10 +34,17 @@ import static javax.persistence.GenerationType.IDENTITY;
         @UniqueConstraint(columnNames = "username", name = "user_username_unique"),
         @UniqueConstraint(columnNames = "email", name = "user_email_unique")
 })
+@EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     @NotBlank(message = "Username is required")
     private String username;
@@ -41,17 +56,15 @@ public class User implements UserDetails {
     @NotBlank(message = "Email is required")
     private String email;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
-    private List<Subreddit> subreddits;
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Subreddit> subreddits = new ArrayList<>();
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
-    private List<Post> posts;
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
 
-    private Instant created;
+    private boolean enabled = false;
 
-    private boolean enabled;
-
-    private boolean blocked;
+    private boolean locked = false;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -78,7 +91,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !blocked;
+        return !locked;
     }
 
     @Override

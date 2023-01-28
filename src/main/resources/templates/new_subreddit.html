@@ -17,7 +17,9 @@
 
     <form action="#" th:action="@{/subreddits/add}" th:object="${subreddit}"
           method="POST">
-        <input type="text" id="name" th:field="*{name}" placeholder="Subreddit Name"
+        <input type="text" id="name"
+               th:field="*{name}"
+               placeholder="Subreddit Name"
                class="form-control mb-4 col-4"
         >
         <ul class="text-danger" th:if="${#fields.hasErrors('name')}"
@@ -25,8 +27,8 @@
             <li th:each="err : ${#fields.errors('name')}" th:text="${err}"></li>
         </ul>
         <input type="text"
-               id="description"
-               th:field="*{description}" placeholder="Subreddit Description"
+               th:field="*{description}"
+               placeholder="Subreddit Description"
                class="form-control mb-4 col-4"
         >
         <ul class="text-danger" th:if="${#fields.hasErrors('description')}"

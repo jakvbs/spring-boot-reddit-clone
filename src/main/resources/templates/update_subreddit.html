@@ -19,14 +19,11 @@
           method="POST">
 
         <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{name}"/>
 
-        <input type="text" th:field="*{name}" class="form-control mb-4 col-4">
-        <ul class="text-danger" th:if="${#fields.hasErrors('name')}"
-            th:errors="*{name}">
-            <li th:each="err : ${#fields.errors('name')}" th:text="${err}"></li>
-        </ul>
-
-        <input type="text" th:field="*{description}" class="form-control mb-4 col-4">
+        <input type="text"
+               th:field="*{description}"
+               class="form-control mb-4 col-4">
         <ul class="text-danger" th:if="${#fields.hasErrors('description')}"
             th:errors="*{description}">
             <li th:each="err : ${#fields.errors('description')}" th:text="${err}"></li>

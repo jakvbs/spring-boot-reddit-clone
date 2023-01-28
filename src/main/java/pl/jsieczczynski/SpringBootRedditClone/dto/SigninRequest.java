@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.auth;
+package pl.jsieczczynski.SpringBootRedditClone.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,11 +11,9 @@ import javax.validation.constraints.NotBlank;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
+public class SigninRequest {
     @NotBlank(message = "Username is required")
     private String username;
-    @NotBlank(message = "Email is required")
-    private String email;
     @NotBlank(message = "Password is required")
     private String password;
 }

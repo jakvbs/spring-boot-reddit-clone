@@ -2,6 +2,7 @@ package pl.jsieczczynski.SpringBootRedditClone.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -14,14 +15,16 @@ import pl.jsieczczynski.SpringBootRedditClone.model.NotificationEmail;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class MailService {
+class MailService {
+    @Value("${spring.mail.username}")
+    private String from;
     private final JavaMailSender mailSender;
 
     @Async
     void sendMail(NotificationEmail notificationEmail) {
         MimeMessagePreparator messagePreparator = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
-            messageHelper.setFrom("abc@example.com");
+            messageHelper.setFrom(from);
             messageHelper.setTo(notificationEmail.getRecipient());
             messageHelper.setSubject(notificationEmail.getSubject());
             messageHelper.setText(notificationEmail.getBody());

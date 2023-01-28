@@ -4,11 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import static javax.persistence.FetchType.LAZY;
@@ -23,6 +27,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 @Table(name = "subreddits", uniqueConstraints = {
         @UniqueConstraint(columnNames = "name", name = "subreddit_name_unique")
 })
+@EntityListeners(AuditingEntityListener.class)
 public class Subreddit {
     public static final String DEFAULT_IMAGE_URL = "https://www.redditstatic.com/icon.png";
 
@@ -30,7 +35,11 @@ public class Subreddit {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    @CreatedDate
     private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     @NotBlank(message = "Community name is required")
     private String name;
@@ -44,18 +53,18 @@ public class Subreddit {
     @Nullable
     String bannerUrl;
 
-    @OneToMany(mappedBy = "subreddit", fetch = LAZY)
-    private List<Post> posts;
+    @OneToMany(mappedBy = "subreddit", fetch = LAZY, cascade = CascadeType.ALL)
+    private List<Post> posts = new ArrayList<>();
 
-    @ManyToMany(fetch = LAZY)
+    @ManyToMany(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "subreddits_users",
             joinColumns = @JoinColumn(name = "subreddit_id", foreignKey = @ForeignKey(name = "fk_subreddit_id")),
             inverseJoinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_id"))
     )
-    private List<User> users;
+    private List<User> users = new ArrayList<>();
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
             name = "author_id",
             referencedColumnName = "id",

@@ -1,24 +1,40 @@
 package pl.jsieczczynski.SpringBootRedditClone.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.lang.Nullable;
 import pl.jsieczczynski.SpringBootRedditClone.utils.Helpers;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-
 import java.time.Instant;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
+
 @Data
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "posts")
+@EntityListeners(AuditingEntityListener.class)
 public class Post {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     @NotBlank(message = "Post name cannot be empty or Null")
     private String title;
@@ -32,7 +48,7 @@ public class Post {
 
     private Integer voteCount = 0;
 
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
             name = "author_id",
             referencedColumnName = "id",
@@ -40,9 +56,7 @@ public class Post {
     )
     private User author;
 
-    Instant createdAt;
-
-    @ManyToOne(fetch = LAZY)
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
     @JoinColumn(
             name = "subreddit_id",
             referencedColumnName = "id",
@@ -53,6 +67,6 @@ public class Post {
 
     @PrePersist
     public void makeSlug() {
-        this.slug = Helpers.slugify(title);
+        slug = Helpers.slugify(title);
     }
 }

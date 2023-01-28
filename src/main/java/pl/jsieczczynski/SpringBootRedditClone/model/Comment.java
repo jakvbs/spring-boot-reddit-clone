@@ -3,6 +3,9 @@ package pl.jsieczczynski.SpringBootRedditClone.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -18,10 +21,17 @@ import static javax.persistence.GenerationType.IDENTITY;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
+@EntityListeners(AuditingEntityListener.class)
 public class Comment {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     @NotEmpty
     private String body;
@@ -30,13 +40,11 @@ public class Comment {
     @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
-    private Instant createdAt;
-
     @ManyToOne(fetch = LAZY)
     @JoinColumn(
             name = "author_id",
             referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_comment_author_id")
+            foreignKey = @ForeignKey(name = "fk_comment_author_idd")
     )
     private User author;
 
@@ -48,6 +56,6 @@ public class Comment {
     )
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> children;
 }

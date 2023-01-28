@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.auth;
+package pl.jsieczczynski.SpringBootRedditClone.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
