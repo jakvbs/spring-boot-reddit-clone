@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto;
 import pl.jsieczczynski.SpringBootRedditClone.model.Subreddit;
 
 import java.util.Optional;
@@ -20,7 +20,7 @@ public interface SubredditRepository extends JpaRepository<Subreddit, Long> {
     Page<Subreddit> findAllByUsers_Username(String username, Pageable pageable);
 
     @Query("""
-            SELECT new pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto(s.id, s.createdAt, s.updatedAt, s.name, s.description, s.imageUrl, s.bannerUrl, COUNT(DISTINCT p), COUNT(DISTINCT u), s.author.username)
+            SELECT new pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto(s.id, s.createdAt, s.updatedAt, s.name, s.description, s.imageUrl, s.bannerUrl, COUNT(DISTINCT p), COUNT(DISTINCT u), s.author.username)
             FROM Subreddit s LEFT JOIN s.posts p LEFT JOIN s.users u WHERE s.name = :name
             GROUP BY s.id, s.author.username
             """)

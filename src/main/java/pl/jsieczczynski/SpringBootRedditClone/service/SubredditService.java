@@ -7,9 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jsieczczynski.SpringBootRedditClone.dto.PostDto;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto;
-import pl.jsieczczynski.SpringBootRedditClone.dto.UserDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.PostDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.UserDto;
 import pl.jsieczczynski.SpringBootRedditClone.exceptions.AppException;
 import pl.jsieczczynski.SpringBootRedditClone.model.*;
 import pl.jsieczczynski.SpringBootRedditClone.repository.PostRepository;
@@ -158,7 +158,7 @@ public class SubredditService implements FieldValueExists {
         userToAdd.getJoinedSubreddits().add(subreddit);
     }
 
-    public PostDto addPost(String subredditName, PostDto.Create post) {
+    public PostDto addPost(String subredditName, PostDto post) {
         Subreddit subreddit = subredditRepository.findByName(subredditName)
                 .orElseThrow(() -> new AppException("No subreddit found with name: " + subredditName));
         User author = authService.getCurrentUser().orElseThrow(() -> new AppException("No user found"));

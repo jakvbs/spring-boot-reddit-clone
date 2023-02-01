@@ -7,8 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto;
-import pl.jsieczczynski.SpringBootRedditClone.dto.UserDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.PostDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.UserDto;
+import pl.jsieczczynski.SpringBootRedditClone.service.PostService;
 import pl.jsieczczynski.SpringBootRedditClone.service.SubredditService;
 import pl.jsieczczynski.SpringBootRedditClone.service.UserService;
 
@@ -22,6 +24,7 @@ import java.util.List;
 public class MvcUserController extends BaseController {
     private final UserService userService;
     private final SubredditService subredditService;
+    private final PostService postService;
 
     @GetMapping
     public String index(@RequestParam(required = false) Integer page,
@@ -37,12 +40,6 @@ public class MvcUserController extends BaseController {
         }
         return findPaginated(pageNumber, sortField, sortDirection, search, model);
     }
-
-//    @GetMapping("/{name}/delete")
-//    public String deleteByName(@PathVariable(value = "name") String name) {
-//        userService.deleteByName(name);
-//        return "redirect:/subreddits";
-//    }
 
     @GetMapping("/{name}")
     public String details(@PathVariable String name, Model model) {
@@ -105,6 +102,44 @@ public class MvcUserController extends BaseController {
         return "user/subreddits";
     }
 
+    @GetMapping("/{name}/posts")
+    public String getPosts(@PathVariable String name,
+                           @RequestParam(required = false) Integer page,
+                           @RequestParam(required = false) String sort,
+                           Model model) {
+        int pageNumber = page != null && page >= 1 ? page : 1;
+        Sort.Direction sortDirection = sort != null && sort.charAt(0) == '-' ? Sort.Direction.DESC : Sort.Direction.ASC;
+        String sortField = sort != null && sort.charAt(0) == '-' ? sort.substring(1) : sort == null ? "id" : sort;
+        List<String> allowed = List.of("id", "name", "description", "createdAt");
+        if (!allowed.contains(sortField)) {
+            sortField = "id";
+        }
+        Page<PostDto> paged = postService.findPaginatedByUser(pageNumber, sortField, sortDirection, name);
+        return findPaginatedPosts(pageNumber, sortField, sortDirection, paged, model);
+    }
+
+    private static String findPaginatedPosts(int page,
+                                             String sortField,
+                                             Sort.Direction sortDirection,
+                                             Page<PostDto> paged,
+                                             Model model) {
+        List<PostDto> posts = paged.getContent();
+        if (page != 1 && posts.isEmpty()) {
+            return findPaginatedPosts(page - 1, sortField, sortDirection, paged, model);
+        }
+
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", paged.getTotalPages());
+        model.addAttribute("totalItems", paged.getTotalElements());
+
+        model.addAttribute("currentSort", sortDirection == Sort.Direction.ASC ? sortField : "-" + sortField);
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDirection", sortDirection);
+
+        model.addAttribute("posts", posts);
+        return "post/list";
+    }
+
     private String findPaginated(int page,
                                  String sortField,
                                  Sort.Direction sortDirection,
@@ -130,28 +165,8 @@ public class MvcUserController extends BaseController {
         return "user/list_all";
     }
 
-//    @GetMapping("/add")
-//    public String createForm(Model model) {
-//        SubredditDto subredditDto = new SubredditDto();
-//        model.addAttribute("subreddit", subredditDto);
-//        return "subreddit/create";
-//    }
-//
-//    @PostMapping
-//    public String addSubreddit(@ModelAttribute("subreddit") @Valid SubredditDto subreddit,
-//                               BindingResult result
-//    ) {
-//        if (result.hasErrors()) {
-//            return "subreddit/create";
-//        }
-//        userService.create(subreddit);
-//        return "redirect:/subreddits/" + subreddit.getName();
-//    }
-
     @GetMapping("/{name}/toggle-ban")
     public String banUser(@PathVariable String name,
-                          @RequestParam(required = false) Integer page,
-                          @RequestParam(required = false) String sort,
                           HttpServletRequest request) {
         userService.toggleBan(name);
         String referer = request.getHeader("Referer");

@@ -7,10 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.jsieczczynski.SpringBootRedditClone.model.*;
-import pl.jsieczczynski.SpringBootRedditClone.repository.PostRepository;
-import pl.jsieczczynski.SpringBootRedditClone.repository.SubredditRepository;
-import pl.jsieczczynski.SpringBootRedditClone.repository.UserRepository;
-import pl.jsieczczynski.SpringBootRedditClone.repository.VoteRepository;
+import pl.jsieczczynski.SpringBootRedditClone.repository.*;
 import pl.jsieczczynski.SpringBootRedditClone.utils.Helpers;
 
 import java.util.*;
@@ -22,6 +19,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final SubredditRepository subredditRepository;
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
     private final VoteRepository voteRepository;
 
     @Override
@@ -101,7 +99,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             }
         });
 
-        List<Vote> votes = new ArrayList<>();
+        List<Vote> postVotes = new ArrayList<>();
         posts.forEach(p -> {
             for (int i = 0; i < Helpers.randomFromRange(1, 100); i++) {
                 User user = Helpers.randomElementFrom(p.getSubreddit().getUsers());
@@ -120,10 +118,43 @@ public class DatabaseSeeder implements CommandLineRunner {
                 p.getVotes().add(vote);
             }
         });
+
+        List<Comment> comments = new ArrayList<>();
+        posts.forEach(p -> {
+            for (int i = 0; i < Helpers.randomFromRange(1, 10); i++) {
+                Comment comment = new Comment();
+                comment.setBody(faker.lorem().paragraph());
+                comment.setAuthor(Helpers.randomElementFrom(p.getSubreddit().getUsers()));
+                comment.setPost(p);
+                comments.add(comment);
+            }
+        });
+
+        List<Vote> commentVotes = new ArrayList<>();
+        comments.forEach(c -> {
+            for (int i = 0; i < Helpers.randomFromRange(1, 100); i++) {
+                User user = Helpers.randomElementFrom(c.getPost().getSubreddit().getUsers());
+                Vote vote = new Vote();
+                vote.setComment(c);
+                vote.setUser(user);
+                vote.setDirection(1);
+                c.getVotes().add(vote);
+            }
+            for (int i = 0; i < Helpers.randomFromRange(1, 100); i++) {
+                User user = Helpers.randomElementFrom(c.getPost().getSubreddit().getUsers());
+                Vote vote = new Vote();
+                vote.setComment(c);
+                vote.setUser(user);
+                vote.setDirection(-1);
+                c.getVotes().add(vote);
+            }
+        });
         userRepository.saveAll(users);
         subredditRepository.saveAll(subreddits);
         postRepository.saveAll(posts);
-        voteRepository.saveAll(votes);
+        commentRepository.saveAll(comments);
+        voteRepository.saveAll(postVotes);
+        voteRepository.saveAll(commentVotes);
 
         System.out.println("Subreddits created");
     }

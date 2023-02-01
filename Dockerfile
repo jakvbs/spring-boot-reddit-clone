@@ -1,18 +1,15 @@
-FROM eclipse-temurin:17-jdk-alpine AS build
-WORKDIR /workspace/app
 
-COPY . /workspace/app
-RUN chmod +x ./gradlew && ./gradlew clean build --info
-RUN mkdir -p build/dependency && (cd build/dependency; jar -xf ../libs/*.jar)
+FROM gradle:7.6.0-jdk17-alpine AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon
 
 FROM eclipse-temurin:17-jdk-alpine
 
-RUN addgroup -S spring && adduser -S spring -G spring
-USER spring
+EXPOSE 8080
 
-VOLUME /tmp
-ARG DEPENDENCY=/workspace/app/build/dependency
-COPY --from=build ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY --from=build ${DEPENDENCY}/META-INF /app/META-INF
-COPY --from=build ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","pl.jsieczczynski.SpringBootRedditClone.SpringBootRedditCloneApplication"]
+RUN mkdir /app
+
+COPY --from=build /home/gradle/src/build/libs/. /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]

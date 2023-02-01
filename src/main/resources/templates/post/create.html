@@ -10,56 +10,56 @@
 
 <div class="container">
     <hr/>
-    <h2>Create Subreddit</h2>
+    <h2>Add Post</h2>
 
     <form
             action="#"
-            th:action="@{/subreddits}"
-            th:object="${subreddit}"
+            th:action="@{/subreddits/{name}/posts(name=${post.subredditName})}"
+            th:object="${post}"
             method="POST"
     >
         <input
                 type="text"
-                id="name"
-                th:field="*{name}"
-                placeholder="Name"
+                id="title"
+                th:field="*{title}"
+                placeholder="Title"
                 class="form-control mb-4 col-4"
         />
         <ul
                 class="text-danger"
-                th:if="${#fields.hasErrors('name')}"
-                th:errors="*{name}"
+                th:if="${#fields.hasErrors('title')}"
+                th:errors="*{title}"
         >
             <li
-                    th:each="err : ${#fields.errors('name')}"
+                    th:each="err : ${#fields.errors('title')}"
                     th:text="${err}"
             ></li>
         </ul>
         <input
                 type="text"
-                th:field="*{description}"
-                placeholder="Description"
+                th:field="*{body}"
+                placeholder="Body"
                 class="form-control mb-4 col-4"
         />
         <ul
                 class="text-danger"
-                th:if="${#fields.hasErrors('description')}"
-                th:errors="*{description}"
+                th:if="${#fields.hasErrors('body')}"
+                th:errors="*{body}"
         >
             <li
-                    th:each="err : ${#fields.errors('description')}"
+                    th:each="err : ${#fields.errors('body')}"
                     th:text="${err}"
             ></li>
         </ul>
 
         <button type="submit" class="btn btn-info col-2">
-            Create Subreddit
+            Add Post
         </button>
     </form>
 
     <hr/>
 
-    <a th:href="@{/subreddits}">Back to Subreddits List</a>
+    <a th:href="@{/subreddits/{name}(name=${post.subredditName})}">Back to subreddit</a>
 </div>
 
 <div th:replace="fragments/footer :: footer"></div>

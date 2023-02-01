@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.dto;
+package pl.jsieczczynski.SpringBootRedditClone.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,4 +20,6 @@ public class CommentDto {
     private String body;
     private String author;
     private int voteScore;
+    private int userVote;
+    private long postId;
 }

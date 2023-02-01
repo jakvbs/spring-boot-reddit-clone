@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto;
 import pl.jsieczczynski.SpringBootRedditClone.service.SubredditService;
 
 import java.util.List;

@@ -12,6 +12,7 @@ import pl.jsieczczynski.SpringBootRedditClone.utils.Helpers;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class Post {
     private String title;
 
     @Lob
-    @Nullable
+    @NotEmpty
     private String body;
 
     @ManyToOne(fetch = LAZY)

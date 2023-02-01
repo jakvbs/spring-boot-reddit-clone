@@ -14,21 +14,21 @@
         <tr>
             <th>
                 <a
-                        th:href="@{'/subreddits/' + ${subredditName} +'/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-id'  : 'id'}}"
+                        th:href="@{'/posts/' + ${postId} +'/comments?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-id'  : 'id'}}"
                 >
                     ID
                 </a>
             </th>
             <th>
                 <a
-                        th:href="@{'/subreddits/' + ${subredditName} +'/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-title'  : 'title'}}"
+                        th:href="@{'/posts/' + ${postId} +'/comments?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-title'  : 'title'}}"
                 >
                     Title
                 </a>
             </th>
             <th>
                 <a
-                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-createdAt'  : 'createdAt'}}"
+                        th:href="@{'/posts/' + ${postId} + '/comments?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-createdAt'  : 'createdAt'}}"
                 >
                     Creation Date
                 </a>
@@ -37,25 +37,25 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="post : ${posts}">
-            <td th:text="${post.id}"></td>
-            <td th:text="${post.title}"></td>
-            <td th:text="${#dates.format(post.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
+        <tr th:each="comment : ${comments}">
+            <td th:text="${comment.id}"></td>
+            <td th:text="${comment.body}"></td>
+            <td th:text="${#dates.format(comment.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
             <td>
                 <a
-                        th:href="@{/posts/{id}(id=${post.id})}"
+                        th:href="@{/posts/comments/{id}(id=${comment.id})}"
                         class="btn btn-success"
                 >
                     Details
                 </a>
                 <a
-                        th:href="@{/posts/{id}/update(id=${post.id})}"
+                        th:href="@{/posts/comments/{id}/update(id=${comment.id})}"
                         class="btn btn-primary"
                 >
                     Update
                 </a>
                 <a
-                        th:href="@{/posts/{id}/delete(id=${post.id})}"
+                        th:href="@{/posts/comments/{id}/delete(id=${comment.id})}"
                         class="btn btn-danger"
                 >
                     Delete
@@ -74,7 +74,7 @@
                 <a
                         class="page-link"
                         tabindex="-1"
-                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage - 1} + '&sort=' + ${currentSort}}"
+                        th:href="@{'/posts/' + ${postId} + '/comments?page=' + ${currentPage - 1} + '&sort=' + ${currentSort}}"
 
                 >
                     Previous
@@ -86,7 +86,7 @@
             >
                 <a
                         class="page-link"
-                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage + 1} + '&sort=' + ${currentSort}}"
+                        th:href="@{'/posts/' + ${postId} + '/comments?page=' + ${currentPage + 1} + '&sort=' + ${currentSort}}"
                 >
                     Next
                 </a>

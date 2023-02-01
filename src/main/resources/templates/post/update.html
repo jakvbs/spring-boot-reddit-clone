@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Reddit-clone admin panel</title>
+
+        <div th:replace="fragments/header :: header-css"></div>
+    </head>
+    <body>
+        <div th:replace="fragments/header :: header"></div>
+
+        <div class="container">
+            <hr />
+            <h2>Update Subreddit</h2>
+
+            <form
+                action="#"
+                th:action="@{/posts/update}"
+                th:object="${post}"
+                method="POST"
+            >
+                <input type="hidden" th:field="*{id}" />
+
+                <input
+                    type="text"
+                    th:field="*{title}"
+                    class="form-control mb-4 col-4"
+                    placeholder="Title"
+                />
+                <ul
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('title')}"
+                    th:errors="*{title}"
+                >
+                    <li
+                        th:each="err : ${#fields.errors('title')}"
+                        th:text="${err}"
+                    ></li>
+                </ul>
+
+                <input
+                        type="text"
+                        th:field="*{body}"
+                        class="form-control mb-4 col-4"
+                        placeholder="Body"
+                />
+                <ul
+                        class="text-danger"
+                        th:if="${#fields.hasErrors('body')}"
+                        th:errors="*{body}"
+                >
+                    <li
+                            th:each="err : ${#fields.errors('body')}"
+                            th:text="${err}"
+                    ></li>
+                </ul>
+
+                <button type="submit" class="btn btn-info col-2">
+                    Update Post
+                </button>
+            </form>
+
+            <hr />
+
+            <a th:href="@{/posts/{id}(id=${post.id})}">
+                Back to post
+            </a>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>

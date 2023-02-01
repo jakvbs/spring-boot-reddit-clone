@@ -7,9 +7,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import pl.jsieczczynski.SpringBootRedditClone.dto.PostDto;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SubredditDto;
-import pl.jsieczczynski.SpringBootRedditClone.dto.UserDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.PostDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.SubredditDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.UserDto;
 import pl.jsieczczynski.SpringBootRedditClone.service.SubredditService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -132,18 +132,18 @@ public class MvcSubredditController extends BaseController {
 
     @GetMapping("/{subredditName}/add-post")
     public String addPostForm(@PathVariable String subredditName, Model model) {
-        PostDto.Create post = new PostDto.Create();
+        PostDto post = new PostDto();
         post.setSubredditName(subredditName);
         model.addAttribute("post", post);
-        return "subreddit/add_post";
+        return "post/create";
     }
 
     @PostMapping("/{subredditName}/posts")
     public String addPost(@PathVariable String subredditName,
-                          @ModelAttribute("post") @Valid PostDto.Create post,
+                          @ModelAttribute("post") @Valid PostDto post,
                           BindingResult result) {
         if (result.hasErrors()) {
-            return "subreddit/add_post";
+            return "post/create";
         }
         PostDto newPost = subredditService.addPost(subredditName, post);
         return "redirect:/posts/" + newPost.getId();

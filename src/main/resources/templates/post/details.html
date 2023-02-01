@@ -65,7 +65,7 @@
             <td>Number of comments</td>
             <td>
                 <a
-                        th:href="@{/subreddits/{name}/posts/{id}/comments(id=${post.id}, name=${post.subredditName})}"
+                        th:href="@{/posts/{id}/comments(id=${post.id})}"
                         th:text="${post.numberOfComments}"
                 ></a>
             </td>
@@ -80,10 +80,10 @@
                     Update
                 </a>
                 <a
-                        th:href="@{/posts/{id}/delete(id=${post.id})}"
-                        class="btn btn-danger"
+                        th:href="@{/posts/{id}/add-comment(id=${post.id})}"
+                        class="btn btn-success"
                 >
-                    Delete
+                    Add comment
                 </a>
             </td>
         </tr>

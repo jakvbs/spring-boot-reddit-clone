@@ -11,8 +11,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
@@ -35,6 +37,7 @@ public class Comment {
     @LastModifiedDate
     private Instant updatedAt;
 
+    @Lob
     @NotEmpty
     private String body;
 
@@ -66,8 +69,11 @@ public class Comment {
     )
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Comment> children;
+
+    @OneToMany(mappedBy = "comment", fetch = LAZY, cascade = CascadeType.ALL)
+    private Set<Vote> votes = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {

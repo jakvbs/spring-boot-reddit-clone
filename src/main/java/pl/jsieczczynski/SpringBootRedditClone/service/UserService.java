@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jsieczczynski.SpringBootRedditClone.dto.UserDto;
+import pl.jsieczczynski.SpringBootRedditClone.dto.model.UserDto;
 import pl.jsieczczynski.SpringBootRedditClone.exceptions.AppException;
 import pl.jsieczczynski.SpringBootRedditClone.model.Role;
 import pl.jsieczczynski.SpringBootRedditClone.model.Subreddit;

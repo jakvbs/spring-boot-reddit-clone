@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Reddit-clone admin panel</title>
+
+        <div th:replace="fragments/header :: header-css"></div>
+    </head>
+    <body>
+        <div th:replace="fragments/header :: header"></div>
+
+        <div class="container">
+            <hr />
+            <h2>Update Comment</h2>
+
+            <form
+                action="#"
+                th:action="@{/posts/comments/update}"
+                th:object="${comment}"
+                method="POST"
+            >
+                <input type="hidden" th:field="*{id}" />
+
+                <input
+                    type="text"
+                    th:field="*{body}"
+                    class="form-control mb-4 col-4"
+                    placeholder="Title"
+                />
+                <ul
+                    class="text-danger"
+                    th:if="${#fields.hasErrors('body')}"
+                    th:errors="*{body}"
+                >
+                    <li
+                        th:each="err : ${#fields.errors('body')}"
+                        th:text="${err}"
+                    ></li>
+                </ul>
+
+                <button type="submit" class="btn btn-info col-2">
+                    Update Comment
+                </button>
+            </form>
+        </div>
+
+        <div th:replace="fragments/footer :: footer"></div>
+    </body>
+</html>
