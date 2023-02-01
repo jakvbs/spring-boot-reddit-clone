@@ -1,11 +1,9 @@
 package pl.jsieczczynski.SpringBootRedditClone.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,20 +12,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
 
-@Data
 @Entity
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users", uniqueConstraints = {
@@ -36,6 +30,7 @@ import static javax.persistence.GenerationType.IDENTITY;
 })
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails {
+    private static final String DEFAULT_IMAGE_URL = "https://www.kindpng.com/picc/m/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png";
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -52,22 +47,32 @@ public class User implements UserDetails {
     @NotBlank(message = "Password is required")
     private String password;
 
-    @Email
     @NotBlank(message = "Email is required")
     private String email;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Subreddit> subreddits = new ArrayList<>();
+    private String imageUrl = DEFAULT_IMAGE_URL;
 
-    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    @Column(columnDefinition = "TEXT")
+    private String about;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
+    private Set<Subreddit> joinedSubreddits = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private Set<Subreddit> createdSubreddits = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private Set<Post> posts = new HashSet<>();
+
+    @OneToMany(mappedBy = "author", fetch = FetchType.LAZY)
+    private Set<Comment> comments = new HashSet<>();
 
     private boolean enabled = false;
 
     private boolean locked = false;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role = Role.USER;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -102,5 +107,32 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id.equals(user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "createdAt = " + createdAt + ", " +
+                "updatedAt = " + updatedAt + ", " +
+                "username = " + username + ", " +
+                "password = " + password + ", " +
+                "email = " + email + ", " +
+                "enabled = " + enabled + ", " +
+                "locked = " + locked + ", " +
+                "role = " + role + ")";
     }
 }

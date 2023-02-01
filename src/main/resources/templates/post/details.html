@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container my-2" align="center">
+    <table border="1" class="table table-striped table-responsive-md">
+        <tbody>
+        <tr>
+            <td>ID</td>
+            <td th:text="${post.id}"></td>
+        </tr>
+        <tr>
+            <td>Title</td>
+            <td th:text="${post.title}"></td>
+        </tr>
+        <tr>
+            <td>Body</td>
+            <td th:text="${post.body}"></td>
+        </tr>
+        <tr>
+            <td>Vote score</td>
+            <td th:text="${post.voteScore}"></td>
+        </tr>
+        <tr>
+            <td>User vote</td>
+            <td th:text="${post.userVote}"></td>
+        </tr>
+        <tr>
+            <td>Creation Date</td>
+            <td
+                    th:text="${#dates.format(post.createdAt, 'dd-MM-yyyy HH:mm:ss')}"
+            ></td>
+        </tr>
+        <tr>
+            <td>Last update</td>
+            <td
+                    th:text="${#dates.format(post.updatedAt, 'dd-MM-yyyy HH:mm:ss')}"
+            ></td>
+        </tr>
+        <tr>
+            <td>Author</td>
+            <td>
+                <a
+                        th:href="@{/users/{name}(name=${post.username})}"
+                        th:text="${post.username}"
+                ></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Subreddit</td>
+            <td>
+                <a
+                        th:href="@{/subreddits/{name}(name=${post.subredditName})}"
+                        th:text="${post.subredditName}"
+                ></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Number of comments</td>
+            <td>
+                <a
+                        th:href="@{/subreddits/{name}/posts/{id}/comments(id=${post.id}, name=${post.subredditName})}"
+                        th:text="${post.numberOfComments}"
+                ></a>
+            </td>
+        </tr>
+        <tr>
+            <td>Actions</td>
+            <td>
+                <a
+                        th:href="@{/posts/{id}/update(id=${post.id})}"
+                        class="btn btn-primary"
+                >
+                    Update
+                </a>
+                <a
+                        th:href="@{/posts/{id}/delete(id=${post.id})}"
+                        class="btn btn-danger"
+                >
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

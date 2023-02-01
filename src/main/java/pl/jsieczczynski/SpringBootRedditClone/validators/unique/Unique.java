@@ -1,5 +1,7 @@
 package pl.jsieczczynski.SpringBootRedditClone.validators.unique;
 
+import pl.jsieczczynski.SpringBootRedditClone.validators.FieldValueExists;
+
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.Documented;

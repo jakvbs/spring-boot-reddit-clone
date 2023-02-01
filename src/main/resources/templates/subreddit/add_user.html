@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <hr/>
+    <h2>Add user</h2>
+
+    <form
+            action="#"
+            th:action="@{/subreddits/{name}/users(name=${user.subredditName})}"
+            th:object="${user}"
+            method="POST"
+    >
+        <input
+                type="text"
+                th:field="*{username}"
+                class="form-control mb-4 col-4"
+                placeholder="Username"
+        />
+        <ul
+                class="text-danger"
+                th:if="${#fields.hasErrors('username')}"
+                th:errors="*{username}"
+        >
+            <li
+                    th:each="err : ${#fields.errors('username')}"
+                    th:text="${err}"
+            ></li>
+        </ul>
+
+        <button type="submit" class="btn btn-info col-2">
+            Add user
+        </button>
+    </form>
+
+    <hr/>
+
+    <a th:href="@{/subreddits/{name}(name=${user.subredditName})}">Back to subreddit</a>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

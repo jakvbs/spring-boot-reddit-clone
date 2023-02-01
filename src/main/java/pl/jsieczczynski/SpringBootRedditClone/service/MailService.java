@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import pl.jsieczczynski.SpringBootRedditClone.exceptions.SpringRedditException;
+import pl.jsieczczynski.SpringBootRedditClone.exceptions.AppException;
 import pl.jsieczczynski.SpringBootRedditClone.model.NotificationEmail;
 
 @Slf4j
@@ -34,7 +34,7 @@ class MailService {
             log.info("Activation email sent!");
         } catch (MailException e) {
             log.error("Exception occurred when sending mail", e);
-            throw new SpringRedditException("Exception occurred when sending mail to " + notificationEmail.getRecipient(), e);
+            throw new AppException("Exception occurred when sending mail to " + notificationEmail.getRecipient(), e);
         }
     }
 }

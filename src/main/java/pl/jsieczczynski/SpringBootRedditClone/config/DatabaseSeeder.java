@@ -1,19 +1,19 @@
 package pl.jsieczczynski.SpringBootRedditClone.config;
 
 import lombok.RequiredArgsConstructor;
+import net.datafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jsieczczynski.SpringBootRedditClone.model.Post;
-import pl.jsieczczynski.SpringBootRedditClone.model.Role;
-import pl.jsieczczynski.SpringBootRedditClone.model.Subreddit;
-import pl.jsieczczynski.SpringBootRedditClone.model.User;
+import pl.jsieczczynski.SpringBootRedditClone.model.*;
 import pl.jsieczczynski.SpringBootRedditClone.repository.PostRepository;
 import pl.jsieczczynski.SpringBootRedditClone.repository.SubredditRepository;
 import pl.jsieczczynski.SpringBootRedditClone.repository.UserRepository;
+import pl.jsieczczynski.SpringBootRedditClone.repository.VoteRepository;
+import pl.jsieczczynski.SpringBootRedditClone.utils.Helpers;
 
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -22,66 +22,109 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final UserRepository userRepository;
     private final SubredditRepository subredditRepository;
     private final PostRepository postRepository;
+    private final VoteRepository voteRepository;
 
     @Override
     @Transactional
-    public void run(String... strings) throws Exception {
+    public void run(String... strings) {
         System.out.println("Application started");
+
+        Faker faker = new Faker();
+
+        Optional<User> adminOption = userRepository.findByUsername("admin");
+        if (adminOption.isPresent()) {
+            System.out.println("Database already seeded");
+            return;
+        }
 
         userRepository.deleteAll();
         subredditRepository.deleteAll();
         postRepository.deleteAll();
 
-        User user = User.builder()
-                .username("user")
-                .email("user@example.com")
-                .password(passwordEncoder.encode("password"))
-                .role(Role.USER)
-                .enabled(true)
-                .build();
-        User admin = User.builder()
-                .username("admin")
-                .email("admin@example.com")
-                .password(passwordEncoder.encode("password"))
-                .role(Role.ADMIN)
-                .enabled(true)
-                .build();
-        userRepository.save(user);
+        User admin = new User();
+        admin.setUsername("admin");
+        admin.setEmail("admin@example.com");
+        admin.setPassword(passwordEncoder.encode("password"));
+        admin.setRole(Role.ADMIN);
+        admin.setEnabled(true);
         userRepository.save(admin);
-        System.out.println("User and admin accounts created");
-        System.out.println("=============================================================");
-        System.out.println();
 
-        Subreddit subreddit = Subreddit.builder()
-                .name("subreddit")
-                .description("subreddit description")
-                .author(user)
-                .users(List.of(user))
-                .build();
-        subredditRepository.save(subreddit);
+        System.out.println("Admin created");
 
+        List<User> users = new ArrayList<>();
+        String passwordEncoded = passwordEncoder.encode("password");
+        for (int i = 0; i < 1000; i++) {
+            User user = new User();
+            user.setUsername("user-" + (i + 1));
+            user.setEmail("user-" + (i + 1) + "@example.com");
+            user.setAbout(faker.lorem().paragraph());
+            user.setPassword(passwordEncoded);
+            user.setRole(Role.USER);
+            user.setEnabled(true);
+            users.add(user);
+        }
+        userRepository.saveAll(users);
 
-        Post post = Post.builder()
-                .title("post title")
-                .author(user)
-                .body("post body")
-                .subreddit(subreddit)
-                .build();
-        postRepository.save(post);
+        System.out.println("Users created");
 
-//        System.out.println("=============================================================");
-//        List<Post> posts = postRepository.findAllBySubreddit(subreddit);
-//        System.out.println(posts);
-//        Faker faker = new Faker();
-//        List<Subreddit> subreddits = new ArrayList<>();
-//        for (int i = 0; i < 100; i++) {
-//            subreddits.add(Subreddit.builder()
-//                    .name("subreddit-" + (i + 1))
-//                    .description(faker.lorem().sentence(2, 5))
-//                    .build());
-//        }
-//        subredditRepository.saveAll(subreddits);
+        List<Subreddit> subreddits = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            Subreddit subreddit = new Subreddit();
+            subreddit.setName("subreddit-" + (i + 1));
+            subreddit.setDescription(faker.lorem().sentence(2, 5));
+            User author = Helpers.randomElementFrom(users);
+            subreddit.setAuthor(author);
+            subreddit.setUsers(Set.of(author));
+            subreddits.add(subreddit);
+        }
+        subredditRepository.saveAll(subreddits);
 
+        List<Post> posts = new ArrayList<>();
+        subreddits.forEach(s -> {
+            s.getAuthor().getCreatedSubreddits().add(s);
+            Set<User> subredditUsers = new HashSet<>();
+            for (int i = 0; i < Helpers.randomFromRange(100, 600); i++) {
+                User user = Helpers.randomElementFrom(users);
+                subredditUsers.add(user);
+                user.getJoinedSubreddits().add(s);
+            }
+            subredditUsers.add(s.getAuthor());
+            s.setUsers(subredditUsers);
 
+            for (int i = 0; i < Helpers.randomFromRange(10, 50); i++) {
+                Post post = new Post();
+                post.setTitle(faker.lorem().sentence(2, 5));
+                post.setBody(faker.lorem().paragraph());
+                post.setAuthor(Helpers.randomElementFrom(s.getUsers()));
+                post.setSubreddit(s);
+                posts.add(post);
+            }
+        });
+
+        List<Vote> votes = new ArrayList<>();
+        posts.forEach(p -> {
+            for (int i = 0; i < Helpers.randomFromRange(1, 100); i++) {
+                User user = Helpers.randomElementFrom(p.getSubreddit().getUsers());
+                Vote vote = new Vote();
+                vote.setPost(p);
+                vote.setUser(user);
+                vote.setDirection(1);
+                p.getVotes().add(vote);
+            }
+            for (int i = 0; i < Helpers.randomFromRange(1, 100); i++) {
+                User user = Helpers.randomElementFrom(p.getSubreddit().getUsers());
+                Vote vote = new Vote();
+                vote.setPost(p);
+                vote.setUser(user);
+                vote.setDirection(-1);
+                p.getVotes().add(vote);
+            }
+        });
+        userRepository.saveAll(users);
+        subredditRepository.saveAll(subreddits);
+        postRepository.saveAll(posts);
+        voteRepository.saveAll(votes);
+
+        System.out.println("Subreddits created");
     }
 }

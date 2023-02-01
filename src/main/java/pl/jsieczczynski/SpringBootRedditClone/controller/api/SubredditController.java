@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.controller;
+package pl.jsieczczynski.SpringBootRedditClone.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +20,7 @@ public class SubredditController {
 
     @GetMapping
     public ResponseEntity<List<SubredditDto>> getAllSubreddits() {
-        return ResponseEntity.ok(subredditService.getAll());
+        return ResponseEntity.ok(SubredditService.getAll());
     }
 
     @GetMapping("/{name}")

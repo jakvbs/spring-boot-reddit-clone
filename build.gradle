@@ -43,10 +43,10 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
 //    implementation group: 'com.auth0', name: 'java-jwt', version: '4.2.2'
-    annotationProcessor group: 'org.mapstruct', name: 'mapstruct', version: '1.5.3.Final'
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.3.Final'
-    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.3.Final'
-    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.3.Final'
+//    annotationProcessor group: 'org.mapstruct', name: 'mapstruct', version: '1.5.3.Final'
+//    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.5.3.Final'
+//    annotationProcessor group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.3.Final'
+//    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.5.3.Final'
     implementation 'net.datafaker:datafaker:1.7.0'
 }
 
@@ -54,8 +54,4 @@ dependencyManagement {
     imports {
         mavenBom "org.testcontainers:testcontainers-bom:${testcontainersVersion}"
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }

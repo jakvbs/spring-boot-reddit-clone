@@ -1,12 +1,12 @@
-package pl.jsieczczynski.SpringBootRedditClone.controller;
+package pl.jsieczczynski.SpringBootRedditClone.controller.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.jsieczczynski.SpringBootRedditClone.dto.AuthResponse;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SigninRequest;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SignupRequest;
+import pl.jsieczczynski.SpringBootRedditClone.dto.response.AuthResponse;
+import pl.jsieczczynski.SpringBootRedditClone.dto.request.SigninRequest;
+import pl.jsieczczynski.SpringBootRedditClone.dto.request.SignupRequest;
 import pl.jsieczczynski.SpringBootRedditClone.service.AuthService;
 
 import javax.validation.Valid;

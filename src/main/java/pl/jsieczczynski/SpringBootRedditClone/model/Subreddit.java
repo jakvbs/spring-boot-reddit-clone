@@ -1,27 +1,27 @@
 package pl.jsieczczynski.SpringBootRedditClone.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 
-@Data
 @Entity
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "subreddits", uniqueConstraints = {
@@ -41,34 +41,57 @@ public class Subreddit {
     @LastModifiedDate
     private Instant updatedAt;
 
-    @NotBlank(message = "Community name is required")
+    @NotBlank(message = "Subreddit name is required")
     private String name;
 
     @NotBlank(message = "Description is required")
     private String description;
 
-    @Nullable
-    String imageUrl = DEFAULT_IMAGE_URL;
+    private String imageUrl = DEFAULT_IMAGE_URL;
 
-    @Nullable
-    String bannerUrl;
+    private String bannerUrl;
 
     @OneToMany(mappedBy = "subreddit", fetch = LAZY, cascade = CascadeType.ALL)
-    private List<Post> posts = new ArrayList<>();
+    private Set<Post> posts = new HashSet<>();
 
-    @ManyToMany(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = LAZY)
     @JoinTable(
             name = "subreddits_users",
             joinColumns = @JoinColumn(name = "subreddit_id", foreignKey = @ForeignKey(name = "fk_subreddit_id")),
             inverseJoinColumns = @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_user_id"))
     )
-    private List<User> users = new ArrayList<>();
+    private Set<User> users = new HashSet<>();
 
-    @ManyToOne(fetch = LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(
             name = "author_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_subreddit_author_id")
     )
     private User author;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Subreddit subreddit = (Subreddit) o;
+        return id.equals(subreddit.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "createdAt = " + createdAt + ", " +
+                "updatedAt = " + updatedAt + ", " +
+                "name = " + name + ", " +
+                "description = " + description + ", " +
+                "imageUrl = " + imageUrl + ", " +
+                "bannerUrl = " + bannerUrl + ")";
+    }
 }

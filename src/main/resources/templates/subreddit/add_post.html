@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <hr/>
+    <h2>Create Post</h2>
+
+    <form
+            action="#"
+            th:action="@{/subreddits/{name}/posts(name=${post.subredditName})}"
+            th:object="${post}"
+            method="POST"
+    >
+        <input
+                type="text"
+                id="title"
+                th:field="*{title}"
+                placeholder="Title"
+                class="form-control mb-4 col-4"
+        />
+        <ul
+                class="text-danger"
+                th:if="${#fields.hasErrors('title')}"
+                th:errors="*{title}"
+        >
+            <li
+                    th:each="err : ${#fields.errors('title')}"
+                    th:text="${err}"
+            ></li>
+        </ul>
+        <input
+                type="text"
+                th:field="*{body}"
+                placeholder="Body"
+                class="form-control mb-4 col-4"
+        />
+        <ul
+                class="text-danger"
+                th:if="${#fields.hasErrors('body')}"
+                th:errors="*{body}"
+        >
+            <li
+                    th:each="err : ${#fields.errors('body')}"
+                    th:text="${err}"
+            ></li>
+        </ul>
+
+        <button type="submit" class="btn btn-info col-2">
+            Save Subreddit
+        </button>
+    </form>
+
+    <hr/>
+
+    <a th:href="@{/subreddits/{name}(name=${post.subredditName})}">Back to subreddit</a>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

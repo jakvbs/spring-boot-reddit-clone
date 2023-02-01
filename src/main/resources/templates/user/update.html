@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container">
+    <hr/>
+    <h2>Update User</h2>
+
+    <form
+            action="#"
+            th:action="@{/users/update}"
+            th:object="${user}"
+            method="POST"
+    >
+        <input type="hidden" th:field="*{username}"/>
+
+        <input
+                type="text"
+                th:field="*{imageUrl}"
+                class="form-control mb-4 col-4"
+                placeholder="Image URL"
+        />
+        <ul
+                class="text-danger"
+                th:if="${#fields.hasErrors('imageUrl')}"
+                th:errors="*{imageUrl}"
+        >
+            <li
+                    th:each="err : ${#fields.errors('imageUrl')}"
+                    th:text="${err}"
+            ></li>
+        </ul>
+
+        <input
+                type="text"
+                th:field="*{about}"
+                class="form-control mb-4 col-4"
+                placeholder="About"
+        />
+        <ul
+                class="text-danger"
+                th:if="${#fields.hasErrors('about')}"
+                th:errors="*{about}"
+        >
+            <li
+                    th:each="err : ${#fields.errors('about')}"
+                    th:text="${err}"
+            ></li>
+        </ul>
+
+        <button type="submit" class="btn btn-info col-2">
+            Update User
+        </button>
+    </form>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+
+</body>
+</html>

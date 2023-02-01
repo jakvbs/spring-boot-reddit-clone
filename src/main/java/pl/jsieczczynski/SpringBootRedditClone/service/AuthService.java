@@ -10,11 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.jsieczczynski.SpringBootRedditClone.dto.AuthResponse;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SigninRequest;
-import pl.jsieczczynski.SpringBootRedditClone.dto.SignupRequest;
-import pl.jsieczczynski.SpringBootRedditClone.exceptions.SpringRedditException;
-import pl.jsieczczynski.SpringBootRedditClone.model.*;
+import pl.jsieczczynski.SpringBootRedditClone.dto.request.SigninRequest;
+import pl.jsieczczynski.SpringBootRedditClone.dto.request.SignupRequest;
+import pl.jsieczczynski.SpringBootRedditClone.dto.response.AuthResponse;
+import pl.jsieczczynski.SpringBootRedditClone.exceptions.AppException;
+import pl.jsieczczynski.SpringBootRedditClone.model.NotificationEmail;
+import pl.jsieczczynski.SpringBootRedditClone.model.RefreshToken;
+import pl.jsieczczynski.SpringBootRedditClone.model.User;
+import pl.jsieczczynski.SpringBootRedditClone.model.VerificationToken;
 import pl.jsieczczynski.SpringBootRedditClone.repository.RefreshTokenRepository;
 import pl.jsieczczynski.SpringBootRedditClone.repository.UserRepository;
 import pl.jsieczczynski.SpringBootRedditClone.repository.VerificationTokenRepository;
@@ -38,12 +41,10 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public void signup(SignupRequest request) {
-        User user = User.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
-                .build();
+        User user = new User();
+        user.setUsername(request.getUsername());
+        user.setEmail(request.getEmail());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
         String token = generateVerificationToken(user);
@@ -59,14 +60,14 @@ public class AuthService {
 
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new SpringRedditException("User not found with name - " + username));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException("User not found with name - " + username));
         user.setEnabled(true);
         userRepository.save(user);
     }
 
     public void verifyAccount(String token) {
         Optional<VerificationToken> verificationToken = verificationTokenRepository.findByToken(token);
-        fetchUserAndEnable(verificationToken.orElseThrow(() -> new SpringRedditException("Invalid Token")));
+        fetchUserAndEnable(verificationToken.orElseThrow(() -> new AppException("Invalid Token")));
         verificationTokenRepository.deleteByToken(token);
     }
 
@@ -78,7 +79,7 @@ public class AuthService {
                 )
         );
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new SpringRedditException("User not found"));
+                .orElseThrow(() -> new AppException("User not found"));
         String jwtToken = accessTokenService.generateToken(user);
         AuthResponse response = new AuthResponse();
         response.setAccessToken(jwtToken);
@@ -96,14 +97,14 @@ public class AuthService {
     }
 
     public void logout() {
-        User user = getCurrentUserOrThrow();
+        User user = getCurrentUser().orElseThrow(() -> new AppException("User not found"));
         refreshTokenRepository.deleteByUserUsername(user.getUsername());
     }
 
     public AuthResponse refresh() {
-        User user = getCurrentUserOrThrow();
+        User user = getCurrentUser().orElseThrow(() -> new AppException("User not found"));
         RefreshToken refreshToken = refreshTokenRepository.findByUserUsername(user.getUsername())
-                .orElseThrow(() -> new SpringRedditException("Refresh token not found"));
+                .orElseThrow(() -> new AppException("Refresh token not found"));
         String newToken = accessTokenService.generateToken(user);
         return AuthResponse.builder()
                 .accessToken(newToken)
@@ -121,14 +122,14 @@ public class AuthService {
         return token;
     }
 
-    User getCurrentUserOrThrow() {
+    Optional<User> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             var principal = authentication.getPrincipal();
-            if (principal instanceof User) {
-                return userRepository.findByUsername(((User) principal).getUsername()).orElseThrow(() -> new SpringRedditException("User not found"));
+            if (principal instanceof User user) {
+                return userRepository.findByUsername(user.getUsername());
             }
         }
-        throw new SpringRedditException("User not found");
+        return Optional.empty();
     }
 }

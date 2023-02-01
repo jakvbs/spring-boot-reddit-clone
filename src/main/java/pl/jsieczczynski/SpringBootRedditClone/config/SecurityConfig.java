@@ -67,7 +67,7 @@ public class SecurityConfig {
                     .hasAnyAuthority(Role.ADMIN.name())
 //                    .hasAnyRole("USER")
 //                    .hasAnyAuthority(Role.USER.name())
-                    .antMatchers("/*")
+                    .antMatchers("/**")
 //                    .anyRequest()
                     .authenticated()
                     .and()
@@ -81,7 +81,12 @@ public class SecurityConfig {
                     .permitAll()
                     .and()
                     .logout()
-                    .permitAll();
+                    .deleteCookies("JSESSIONID")
+                    .permitAll()
+                    .and()
+                    .rememberMe()
+                    .key("uniqueAndSecret")
+                    .tokenValiditySeconds(86400);
 
             return http.build();
         }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container my-2" align="center">
+    <table border="1" class="table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>
+                <a
+                        th:href="@{'/subreddits?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-id'  : 'id'}}"
+                >
+                    ID
+                </a>
+            </th>
+            <th>
+                <a
+                        th:href=" @{'/subreddits?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-name'  : 'name'}}"
+                >
+                    Name
+                </a>
+            </th>
+            <th>
+                <a
+                        th:href="@{'/subreddits?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-createdAt'  : 'createdAt'}}"
+                >
+                    Creation Date
+                </a>
+            </th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subreddit : ${subreddits}">
+            <td th:text="${subreddit.id}"></td>
+            <td th:text="${subreddit.name}"></td>
+            <td th:text="${#dates.format(subreddit.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
+            <td>
+                <a
+                        th:href="@{/subreddits/{name}(name=${subreddit.name})}"
+                        class="btn btn-success"
+                >
+                    Details
+                </a>
+                <a
+                        th:href="@{/subreddits/{name}/update(name=${subreddit.name})}"
+                        class="btn btn-primary"
+                >
+                    Update
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <a th:href="@{/subreddits/add}" class="btn btn-info btn-sm mb-3">
+        Create Subreddit
+    </a>
+
+    <nav aria-label="Page navigation example" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li
+                    class="page-item"
+                    th:classappend="${currentPage == 1} ? 'disabled'"
+            >
+                <a
+                        class="page-link"
+                        tabindex="-1"
+                        th:href="@{'/subreddits?page=' + ${currentPage - 1} + ${search.length() > 0 ? '&search='+search : ''} + '&sort=' + ${currentSort}}"
+                >
+                    Previous
+                </a>
+            </li>
+            <li
+                    class="page-item"
+                    th:classappend="${currentPage +1 > totalPages} ? 'disabled'"
+            >
+                <a
+                        class="page-link"
+                        th:href="@{'/subreddits?page=' + ${currentPage + 1} + ${search.length() > 0 ? '&search='+search : ''} + '&sort=' + ${currentSort}}"
+                >
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>

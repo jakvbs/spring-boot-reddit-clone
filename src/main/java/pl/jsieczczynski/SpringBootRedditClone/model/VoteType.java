@@ -1,7 +1,7 @@
 package pl.jsieczczynski.SpringBootRedditClone.model;
 
 import lombok.Getter;
-import pl.jsieczczynski.SpringBootRedditClone.exceptions.SpringRedditException;
+import pl.jsieczczynski.SpringBootRedditClone.exceptions.AppException;
 
 import java.util.Arrays;
 
@@ -19,6 +19,6 @@ public enum VoteType {
         return Arrays.stream(VoteType.values())
                 .filter(value -> value.getDirection() == direction)
                 .findAny()
-                .orElseThrow(() -> new SpringRedditException("Vote not found"));
+                .orElseThrow(() -> new AppException("Vote not found"));
     }
 }

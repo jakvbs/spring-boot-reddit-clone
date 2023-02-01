@@ -1,23 +1,25 @@
 package pl.jsieczczynski.SpringBootRedditClone.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
-@Data
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "comments")
@@ -50,6 +52,14 @@ public class Comment {
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(
+            name = "root_comment_id",
+            referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_comment_root_comment_id")
+    )
+    private Comment rootComment;
+
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(
             name = "parent_id",
             referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_comment_parent_id")
@@ -58,4 +68,26 @@ public class Comment {
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> children;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Comment comment = (Comment) o;
+        return id.equals(comment.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
+                "createdAt = " + createdAt + ", " +
+                "updatedAt = " + updatedAt + ", " +
+                "body = " + body + ")";
+    }
 }

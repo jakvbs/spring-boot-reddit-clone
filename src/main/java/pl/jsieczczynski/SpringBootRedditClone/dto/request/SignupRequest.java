@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.dto;
+package pl.jsieczczynski.SpringBootRedditClone.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +8,7 @@ import pl.jsieczczynski.SpringBootRedditClone.validators.unique.Unique;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 @Data
 @AllArgsConstructor
@@ -23,5 +24,6 @@ public class SignupRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$", message = "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one digit and one special character")
     private String password;
 }

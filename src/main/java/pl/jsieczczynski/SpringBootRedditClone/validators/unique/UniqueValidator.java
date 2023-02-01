@@ -2,6 +2,7 @@ package pl.jsieczczynski.SpringBootRedditClone.validators.unique;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationContext;
+import pl.jsieczczynski.SpringBootRedditClone.validators.FieldValueExists;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

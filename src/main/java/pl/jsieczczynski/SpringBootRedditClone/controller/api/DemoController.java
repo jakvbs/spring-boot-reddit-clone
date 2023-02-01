@@ -1,4 +1,4 @@
-package pl.jsieczczynski.SpringBootRedditClone.controller;
+package pl.jsieczczynski.SpringBootRedditClone.controller.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -3,13 +3,14 @@ package pl.jsieczczynski.SpringBootRedditClone.model;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import static javax.persistence.FetchType.LAZY;
 import static javax.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "votes")
@@ -18,7 +19,9 @@ public class Vote {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    private VoteType voteType;
+    @Min(value = -1)
+    @Max(value = 1)
+    private int direction;
 
     @ManyToOne(fetch = LAZY)
     @JoinColumn(

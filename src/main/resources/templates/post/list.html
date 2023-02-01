@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reddit-clone admin panel</title>
+
+    <div th:replace="fragments/header :: header-css"></div>
+</head>
+<body>
+<div th:replace="fragments/header :: header"></div>
+
+<div class="container my-2" align="center">
+    <table border="1" class="table table-striped table-responsive-md">
+        <thead>
+        <tr>
+            <th>
+                <a
+                        th:href="@{'/subreddits/' + ${subredditName} +'/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-id'  : 'id'}}"
+                >
+                    ID
+                </a>
+            </th>
+            <th>
+                <a
+                        th:href="@{'/subreddits/' + ${subredditName} +'/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-title'  : 'title'}}"
+                >
+                    Title
+                </a>
+            </th>
+            <th>
+                <a
+                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage} + '&sort=' + ${sortDirection.name().equalsIgnoreCase('ASC') ? '-createdAt'  : 'createdAt'}}"
+                >
+                    Creation Date
+                </a>
+            </th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="post : ${posts}">
+            <td th:text="${post.id}"></td>
+            <td th:text="${post.title}"></td>
+            <td th:text="${#dates.format(post.createdAt, 'dd-MM-yyyy HH:mm:ss')}"></td>
+            <td>
+                <a
+                        th:href="@{/posts/{id}(id=${post.id})}"
+                        class="btn btn-success"
+                >
+                    Details
+                </a>
+                <a
+                        th:href="@{/posts/{id}/update(id=${post.id})}"
+                        class="btn btn-primary"
+                >
+                    Update
+                </a>
+                <a
+                        th:href="@{/posts/{id}/delete(id=${post.id})}"
+                        class="btn btn-danger"
+                >
+                    Delete
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example" th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li
+                    class="page-item"
+                    th:classappend="${currentPage == 1} ? 'disabled'"
+            >
+                <a
+                        class="page-link"
+                        tabindex="-1"
+                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage - 1} + '&sort=' + ${currentSort}}"
+
+                >
+                    Previous
+                </a>
+            </li>
+            <li
+                    class="page-item"
+                    th:classappend="${currentPage +1 > totalPages} ? 'disabled'"
+            >
+                <a
+                        class="page-link"
+                        th:href="@{'/subreddits/' + ${subredditName} + '/posts?page=' + ${currentPage + 1} + '&sort=' + ${currentSort}}"
+                >
+                    Next
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
