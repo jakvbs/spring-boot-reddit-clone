@@ -37,4 +37,4 @@ out/
 .vscode/
 
 #### Config ###
-#application.properties
+application.properties
